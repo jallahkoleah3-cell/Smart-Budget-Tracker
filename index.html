@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,3 +73,67 @@ Add Transaction
 
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Budget Tracker</title>
+<link rel="stylesheet" href="stylesheet.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container">
+<h1>💰 Smart Budget Tracker</h1>
+
+<h2>Your Balance</h2>
+<h3 id="balance">$0.00</h3>
+
+<div class="summary">
+<div>
+<h4>Income</h4>
+<p id="money-plus">$0.00</p>
+</div>
+
+<div>
+<h4>Expense</h4>
+<p id="money-minus">$0.00</p>
+</div>
+</div>
+
+<h3>Transaction History</h3>
+<ul id="list"></ul>
+
+<h3>Add Transaction</h3>
+
+<form id="form">
+<input
+type="text"
+id="text"
+placeholder="Description"
+required>
+
+<input
+type="number"
+id="amount"
+placeholder="Amount (+ income, - expense)"
+required>
+
+<button type="submit">
+Add Transaction
+</button>
+
+</form>
+
+<h3>Income vs Expenses</h3>
+<canvas id="expenseChart"></canvas>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+>>>>>>> eeb94ff16cffef341c55f7a64418fa871dc75043
