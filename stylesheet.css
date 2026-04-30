@@ -35,6 +35,10 @@ border-radius:10px;
 margin:20px 0;
 }
 
+h4{
+    color: cornflowerblue;
+}
+
 #money-plus{
 color:green;
 font-weight:bold;
@@ -83,4 +87,130 @@ border-radius:6px;
 
 canvas{
 margin-top:25px;
+}
+
+.dark-mode {
+background: #1e1e1e;
+color: white;
+}
+
+.dark-mode .container {
+background: #2a2a2a;
+}
+
+.dark-mode li {
+background: #333;
+color: white;
+}
+
+.header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+#toggleDark {
+padding: 6px 10px;
+border-radius: 50%;
+cursor: pointer;
+border: none;
+background: #333;
+color: white;
+font-size: 16px;
+}
+
+#toggleDark:hover {
+opacity: 0.8;
+}
+
+.dark-mode {
+background: #121212;
+color: #ffffff;
+}
+
+.dark-mode .container {
+background: #1e1e1e;
+box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+.dark-mode li {
+background: #2a2a2a;
+color: #fff;
+}
+
+.dark-mode input,
+.dark-mode select {
+background: #333;
+color: #fff;
+border: 1px solid #555;
+}
+
+.dark-mode button {
+background: #444;
+color: white;
+}
+
+.category {
+display: block;
+font-size: 12px;
+color: gray;
+margin-top: 4px;
+}
+
+li span:last-child {
+font-weight: bold;
+}
+
+li span:last-child::before {
+margin-right: 5px;
+}
+
+li div:first-child {
+display: flex;
+flex-direction: column;
+}
+
+li strong {
+font-size: 14px;
+}
+
+li small {
+font-size: 12px;
+color: gray;
+}
+
+body {
+transition: background 0.3s ease, color 0.3s ease;
+}
+
+.container {
+transition: background 0.3s ease;
+}
+
+li {
+transition: background 0.3s ease;
+}
+
+@media (max-width: 500px) {
+.container {
+width: 95%;
+padding: 20px;
+}
+
+.summary {
+flex-direction: column;
+gap: 10px;
+}
+
+input, select, button {
+font-size: 14px;
+}
+}
+
+li, .container, button {
+transition: all 0.2s ease;
+}
+
+button:hover {
+transform: scale(1.02);
 }

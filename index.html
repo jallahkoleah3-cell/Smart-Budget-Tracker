@@ -10,7 +10,10 @@
 <body>
 
 <div class="container">
-<h1>💰 Smart Budget Tracker</h1>
+    <div class="header">
+        <h1>💰 Smart Budget Tracker</h1>
+        <button id="toggleDark">🌙</button>
+    </div>
 
 <h2>Your Balance</h2>
 <h3 id="balance">$0.00</h3>
@@ -44,6 +47,15 @@ type="number"
 id="amount"
 placeholder="Amount (+ income, - expense)"
 required>
+
+<select id="category" required>
+<option value="">Select Category</option>
+<option value="Food">Food</option>
+<option value="Transport">Transport</option>
+<option value="Salary">Salary</option>
+<option value="Bills">Bills</option>
+<option value="Other">Other</option>
+</select><br>
 
 <button type="submit">
 Add Transaction

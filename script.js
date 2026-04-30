@@ -5,13 +5,10 @@ const list=document.getElementById('list');
 const form=document.getElementById('form');
 const text=document.getElementById('text');
 const amount=document.getElementById('amount');
+const category=document.getElementById('category');
 
-const localStorageTransactions=
-JSON.parse(
-localStorage.getItem('transactions')
-) || [];
-
-let transactions=localStorageTransactions;
+let transactions =
+JSON.parse(localStorage.getItem('transactions')) || [];
 let chart;
 
 function addTransaction(e){
@@ -20,6 +17,7 @@ e.preventDefault();
 const transaction={
 id:Date.now(),
 text:text.value,
+category:category.value,
 amount:Number(amount.value)
 };
 
@@ -39,8 +37,12 @@ const li=document.createElement('li');
 const sign=
 transaction.amount<0 ? '-' : '+';
 
-li.innerHTML=`
-${transaction.text}
+li.innerHTML = `
+<div>
+<strong>${transaction.category}</strong>
+<small>${transaction.text}</small>
+</div>
+
 <div>
 <span>${sign}$${Math.abs(transaction.amount)}</span>
 
@@ -49,7 +51,6 @@ class="delete-btn"
 onclick="removeTransaction(${transaction.id})">
 X
 </button>
-
 </div>
 `;
 
@@ -146,3 +147,33 @@ addTransaction
 );
 
 init();
+
+const toggleDark = document.getElementById('toggleDark');
+
+// 1. Load saved mode FIRST
+function loadDarkMode(){
+if(localStorage.getItem('darkMode') === 'enabled'){
+document.body.classList.add('dark-mode');
+toggleDark.textContent = "☀";
+}else{
+toggleDark.textContent = "🌙";
+}
+}
+
+
+// 3. Toggle button
+toggleDark.addEventListener('click', () => {
+
+document.body.classList.toggle('dark-mode');
+
+// Save state based on current mode
+if(document.body.classList.contains('dark-mode')){
+localStorage.setItem('darkMode', 'enabled');
+toggleDark.textContent = "☀";
+}else{
+localStorage.setItem('darkMode', 'disabled');
+toggleDark.textContent = "🌙";
+}
+});
+
+
