@@ -1,305 +1,318 @@
-<<<<<<< HEAD
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+/* =========================
+   BASE RESET
+========================= */
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: Arial, sans-serif;
 }
 
-body{
-background:#f4f6f9;
-display:flex;
-justify-content:center;
-padding:40px;
+/* =========================
+   GLOBAL LAYOUT
+========================= */
+body {
+background: linear-gradient(135deg, #eef2f7, #dfe9f3);
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+padding: 20px;
+transition: all 0.4s ease;
 }
 
-.container{
-background:white;
-padding:30px;
-width:450px;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,.1);
+/* =========================
+   LOGIN SCREEN
+========================= */
+#auth-container {
+height: 100vh;
+width: 100%;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+background: linear-gradient(135deg, #4f46e5, #06b6d4);
 }
 
-h1{
-text-align:center;
-margin-bottom:20px;
-color:blue
+#auth-container h2 {
+color: white;
+margin-bottom: 20px;
 }
 
-.summary{
-display:flex;
-justify-content:space-between;
-background:#eee;
-padding:15px;
-border-radius:10px;
-margin:20px 0;
+#auth-container input {
+width: 280px;
+padding: 12px;
+margin: 6px 0;
+border-radius: 8px;
+border: none;
+outline: none;
 }
 
-h4{
-    color: cornflowerblue;
+#auth-container button {
+width: 140px;
+margin: 5px;
+padding: 10px;
+border-radius: 8px;
+border: none;
+cursor: pointer;
+font-weight: bold;
 }
 
-#money-plus{
-color:green;
-font-weight:bold;
-}
-
-#money-minus{
-color:red;
-font-weight:bold;
-}
-
-ul{
-list-style:none;
-margin-bottom:20px;
-}
-
-li{
-background:#fafafa;
-padding:10px;
-margin:10px 0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.delete-btn{
-padding:6px 10px;
-cursor:pointer;
-}
-
-form{
-display:flex;
-flex-direction:column;
-}
-
-input{
-padding:12px;
-margin:10px 0;
-}
-
-button{
-padding:12px;
-border:none;
-cursor:pointer;
-border-radius:6px;
-}
-
-canvas{
-margin-top:25px;
-}
-
-.dark-mode {
-background: #1e1e1e;
+#signupBtn {
+background: #22c55e;
 color: white;
 }
 
-.dark-mode .container {
-background: #2a2a2a;
-}
-
-.dark-mode li {
-background: #333;
+#loginBtn {
+background: #2563eb;
 color: white;
 }
 
+/* =========================
+   APP WRAPPER
+========================= */
+#app {
+width: 100%;
+display: flex;
+justify-content: center;
+}
+
+/* =========================
+   MAIN CONTAINER (PREMIUM CARD)
+========================= */
+.container {
+background: #ffffff;
+padding: 25px;
+width: 450px;
+border-radius: 18px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+transition: all 0.3s ease;
+animation: fadeIn 0.5s ease;
+}
+
+.container:hover {
+transform: translateY(-2px);
+box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+/* FADE ANIMATION */
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+/* =========================
+   HEADER
+========================= */
 .header {
 display: flex;
 justify-content: space-between;
 align-items: center;
+margin-bottom: 20px;
 }
 
-#toggleDark {
-padding: 6px 10px;
-border-radius: 50%;
-cursor: pointer;
-border: none;
-background: #333;
-color: white;
-font-size: 16px;
+h1 {
+font-size: 20px;
+color: #1e3a8a;
 }
 
-#toggleDark:hover {
-opacity: 0.8;
+/* =========================
+   BALANCE CARD
+========================= */
+.balance-card {
+text-align: center;
+margin-bottom: 20px;
+padding: 15px;
+border-radius: 12px;
+background: #f8fafc;
 }
 
-.dark-mode {
-background: #121212;
-color: #ffffff;
+.balance-card h3 {
+font-size: 28px;
 }
 
-.dark-mode .container {
-background: #1e1e1e;
-box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-}
-
-.dark-mode li {
-background: #2a2a2a;
-color: #fff;
-}
-
-.dark-mode input,
-.dark-mode select {
-background: #333;
-color: #fff;
-border: 1px solid #555;
-}
-
-.dark-mode button {
-background: #444;
-color: white;
-}
-
-.category {
-display: block;
-font-size: 12px;
-color: gray;
-margin-top: 4px;
-}
-
-li span:last-child {
-font-weight: bold;
-}
-
-li span:last-child::before {
-margin-right: 5px;
-}
-
-li div:first-child {
+/* =========================
+   SUMMARY CARDS
+========================= */
+.summary {
 display: flex;
-flex-direction: column;
+justify-content: space-between;
+gap: 10px;
+margin: 15px 0;
 }
 
-li strong {
-font-size: 14px;
+.card {
+flex: 1;
+padding: 12px;
+border-radius: 12px;
+background: #f3f4f6;
+text-align: center;
 }
 
-li small {
-font-size: 12px;
-color: gray;
+.card.income {
+border-left: 5px solid #22c55e;
+color: #16a34a;
 }
 
-body {
-transition: background 0.3s ease, color 0.3s ease;
+.card.expense {
+border-left: 5px solid #ef4444;
+color: #dc2626;
 }
 
-.container {
-transition: background 0.3s ease;
+/* =========================
+   SECTIONS
+========================= */
+.session {
+margin-top: 18px;
+}
+
+/* =========================
+   TRANSACTION LIST
+========================= */
+ul {
+list-style: none;
 }
 
 li {
-transition: background 0.3s ease;
+background: #f9fafb;
+padding: 12px;
+margin-bottom: 10px;
+border-radius: 10px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-left: 4px solid transparent;
+transition: 0.2s ease;
 }
 
-@media (max-width: 500px) {
-.container {
-width: 95%;
-padding: 20px;
+li:hover {
+transform: scale(1.02);
 }
 
-.summary {
+li.income {
+border-left-color: #22c55e;
+}
+
+li.expense {
+border-left-color: #ef4444;
+}
+
+/* =========================
+   DELETE BUTTON
+========================= */
+.delete-btn {
+background: #ef4444;
+color: white;
+border: none;
+padding: 5px 10px;
+border-radius: 6px;
+cursor: pointer;
+font-size: 12px;
+}
+
+/* =========================
+   FORM
+========================= */
+form {
+display: flex;
 flex-direction: column;
 gap: 10px;
 }
 
-input, select, button {
-font-size: 14px;
-}
-}
-
-li, .container, button {
-transition: all 0.2s ease;
+input, select {
+padding: 12px;
+border-radius: 8px;
+border: 1px solid #ddd;
+outline: none;
 }
 
-button:hover {
-transform: scale(1.02);
-}
-=======
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-background:#f4f6f9;
-display:flex;
-justify-content:center;
-padding:40px;
+form button {
+padding: 12px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+background: #2563eb;
+color: white;
+font-weight: bold;
+transition: 0.2s ease;
 }
 
-.container{
-background:white;
-padding:30px;
-width:450px;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,.1);
+form button:hover {
+transform: translateY(-2px);
 }
 
-h1{
-text-align:center;
-margin-bottom:20px;
-color:blue;
+/* =========================
+   CHART
+========================= */
+canvas {
+margin-top: 20px;
 }
 
-.summary{
-display:flex;
-justify-content:space-between;
-background:#eee;
-padding:15px;
-border-radius:10px;
-margin:20px 0;
+/* =========================
+   DARK MODE
+========================= */
+.dark-mode {
+background: #0f172a;
 }
 
-#money-plus{
-color:green;
-font-weight:bold;
+.dark-mode .container {
+background: #1e293b;
+color: white;
 }
 
-#money-minus{
-color:red;
-font-weight:bold;
+.dark-mode .balance-card,
+.dark-mode .card,
+.dark-mode li {
+background: #334155;
+color: white;
 }
 
-ul{
-list-style:none;
-margin-bottom:20px;
+.dark-mode input,
+.dark-mode select {
+background: #1f2937;
+color: white;
+border: 1px solid #475569;
 }
 
-li{
-background:#fafafa;
-padding:10px;
-margin:10px 0;
-display:flex;
-justify-content:space-between;
-align-items:center;
+.dark-mode h1,
+.dark-mode h3,
+.dark-mode h4 {
+color: white;
 }
 
-.delete-btn{
-padding:6px 10px;
-cursor:pointer;
+/* FIX BODY IN DARK MODE */
+.dark-mode body {
+background: #0f172a;
 }
 
-form{
-display:flex;
-flex-direction:column;
+/* =========================
+   TOGGLE BUTTON
+========================= */
+#toggleDark {
+padding: 8px 12px;
+border-radius: 50%;
+border: none;
+cursor: pointer;
+background: #111827;
+color: white;
 }
 
-input{
-padding:12px;
-margin:10px 0;
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 500px) {
+.container {
+width: 95%;
+padding: 15px;
 }
 
-button{
-padding:12px;
-border:none;
-cursor:pointer;
-border-radius:6px;
+.summary {
+flex-direction: column;
 }
-
-canvas{
-margin-top:25px;
 }
->>>>>>> eeb94ff16cffef341c55f7a64418fa871dc75043

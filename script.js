@@ -1,330 +1,231 @@
-<<<<<<< HEAD
-const balance=document.getElementById('balance');
-const moneyPlus=document.getElementById('money-plus');
-const moneyMinus=document.getElementById('money-minus');
-const list=document.getElementById('list');
-const form=document.getElementById('form');
-const text=document.getElementById('text');
-const amount=document.getElementById('amount');
-const category=document.getElementById('category');
+import { auth, db } from "./firebase.js";
 
-let transactions =
-JSON.parse(localStorage.getItem('transactions')) || [];
-let chart;
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-function addTransaction(e){
-e.preventDefault();
+import {
+  ref,
+  push,
+  onValue,
+  remove
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
-const transaction={
-id:Date.now(),
-text:text.value,
-category:category.value,
-amount:Number(amount.value)
-};
-
-transactions.push(transaction);
-
-updateLocalStorage();
-init();
-
-text.value='';
-amount.value='';
-}
-
-function addTransactionDOM(transaction){
-
-const li=document.createElement('li');
-
-const sign=
-transaction.amount<0 ? '-' : '+';
-
-li.innerHTML = `
-<div>
-<strong>${transaction.category}</strong>
-<small>${transaction.text}</small>
-</div>
-
-<div>
-<span>${sign}$${Math.abs(transaction.amount)}</span>
-
-<button
-class="delete-btn"
-onclick="removeTransaction(${transaction.id})">
-X
-</button>
-</div>
-`;
-
-list.appendChild(li);
-}
-
-function updateValues(){
-
-const amounts=
-transactions.map(item=>item.amount);
-
-const total=
-amounts.reduce((a,b)=>a+b,0);
-
-const income=
-amounts
-.filter(item=>item>0)
-.reduce((a,b)=>a+b,0);
-
-const expense=
-amounts
-.filter(item=>item<0)
-.reduce((a,b)=>a+b,0);
-
-balance.innerText=`$${total}`;
-moneyPlus.innerText=`$${income}`;
-moneyMinus.innerText=`$${Math.abs(expense)}`;
-
-drawChart(
-income,
-Math.abs(expense)
-);
-
-}
-
-function removeTransaction(id){
-
-transactions=
-transactions.filter(
-item=>item.id!==id
-);
-
-updateLocalStorage();
-init();
-
-}
-
-function updateLocalStorage(){
-localStorage.setItem(
-'transactions',
-JSON.stringify(transactions)
-);
-}
-
-function drawChart(income,expense){
-
-if(chart){
-chart.destroy();
-}
-
-chart=
-new Chart(
-document.getElementById('expenseChart'),
-{
-type:'pie',
-data:{
-labels:[
-'Income',
-'Expenses'
-],
-datasets:[{
-data:[
-income,
-expense
-]
-}]
-}
-}
-);
-
-}
-
-function init(){
-list.innerHTML='';
-transactions.forEach(
-addTransactionDOM
-);
-updateValues();
-}
-
-form.addEventListener(
-'submit',
-addTransaction
-);
-
-init();
-
+/* ========================
+   DOM
+======================== */
+const balance = document.getElementById('balance');
+const moneyPlus = document.getElementById('money-plus');
+const moneyMinus = document.getElementById('money-minus');
+const list = document.getElementById('list');
+const form = document.getElementById('form');
+const text = document.getElementById('text');
+const amount = document.getElementById('amount');
+const category = document.getElementById('category');
 const toggleDark = document.getElementById('toggleDark');
 
-// 1. Load saved mode FIRST
-function loadDarkMode(){
-if(localStorage.getItem('darkMode') === 'enabled'){
-document.body.classList.add('dark-mode');
-toggleDark.textContent = "☀";
-}else{
-toggleDark.textContent = "🌙";
-}
-}
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
+const authMessage = document.getElementById("authMessage");
 
+const authContainer = document.getElementById("auth-container");
+const app = document.getElementById("app");
 
-// 3. Toggle button
-toggleDark.addEventListener('click', () => {
+/* ========================
+   STATE
+======================== */
+let transactions = [];
+let currentUser = null;
+let chart = null;
 
-document.body.classList.toggle('dark-mode');
-
-// Save state based on current mode
-if(document.body.classList.contains('dark-mode')){
-localStorage.setItem('darkMode', 'enabled');
-toggleDark.textContent = "☀";
-}else{
-localStorage.setItem('darkMode', 'disabled');
-toggleDark.textContent = "🌙";
-}
+/* ========================
+   AUTH
+======================== */
+signupBtn.addEventListener("click", async () => {
+  try {
+    await createUserWithEmailAndPassword(auth, email.value, password.value);
+    authMessage.textContent = "Account created!";
+  } catch (err) {
+    authMessage.textContent = err.message;
+  }
 });
 
+loginBtn.addEventListener("click", async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    authMessage.textContent = "Login successful!";
+  } catch (err) {
+    authMessage.textContent = err.message;
+  }
+});
 
-=======
-const balance=document.getElementById('balance');
-const moneyPlus=document.getElementById('money-plus');
-const moneyMinus=document.getElementById('money-minus');
-const list=document.getElementById('list');
-const form=document.getElementById('form');
-const text=document.getElementById('text');
-const amount=document.getElementById('amount');
+/* ========================
+   AUTH STATE
+======================== */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    authContainer.style.display = "none";
+    app.style.display = "block";
+    loadTransactions();
+    loadDarkMode();
+  } else {
+    currentUser = null;
+    authContainer.style.display = "flex";
+    app.style.display = "none";
+  }
+});
 
-const localStorageTransactions=
-JSON.parse(
-localStorage.getItem('transactions')
-) || [];
+/* ========================
+   LOAD DATA
+======================== */
+function loadTransactions() {
+  const userRef = ref(db, `users/${currentUser.uid}/transactions`);
 
-let transactions=localStorageTransactions;
-let chart;
+  onValue(userRef, (snapshot) => {
+    const data = snapshot.val();
+    transactions = [];
 
-function addTransaction(e){
-e.preventDefault();
+    if (data) {
+      transactions = Object.entries(data).map(([id, value]) => ({
+        id,
+        ...value,
+        amount: Number(value.amount)
+      }));
+    }
 
-const transaction={
-id:Date.now(),
-text:text.value,
-amount:Number(amount.value)
-};
-
-transactions.push(transaction);
-
-updateLocalStorage();
-init();
-
-text.value='';
-amount.value='';
+    render();
+  });
 }
 
-function addTransactionDOM(transaction){
+/* ========================
+   ADD TRANSACTION
+======================== */
+function addTransaction(e) {
+  e.preventDefault();
 
-const li=document.createElement('li');
+  if (!currentUser) return;
+  if (!text.value || !amount.value || !category.value) return;
 
-const sign=
-transaction.amount<0 ? '-' : '+';
+  const userRef = ref(db, `users/${currentUser.uid}/transactions`);
 
-li.innerHTML=`
-${transaction.text}
-<div>
-<span>${sign}$${Math.abs(transaction.amount)}</span>
+  push(userRef, {
+    text: text.value,
+    category: category.value,
+    amount: Number(amount.value)
+  });
 
-<button
-class="delete-btn"
-onclick="removeTransaction(${transaction.id})">
-X
-</button>
-
-</div>
-`;
-
-list.appendChild(li);
+  text.value = "";
+  amount.value = "";
+  category.value = "";
 }
 
-function updateValues(){
-
-const amounts=
-transactions.map(item=>item.amount);
-
-const total=
-amounts.reduce((a,b)=>a+b,0);
-
-const income=
-amounts
-.filter(item=>item>0)
-.reduce((a,b)=>a+b,0);
-
-const expense=
-amounts
-.filter(item=>item<0)
-.reduce((a,b)=>a+b,0);
-
-balance.innerText=`$${total}`;
-moneyPlus.innerText=`$${income}`;
-moneyMinus.innerText=`$${Math.abs(expense)}`;
-
-drawChart(
-income,
-Math.abs(expense)
-);
-
+/* ========================
+   REMOVE
+======================== */
+function removeTransaction(id) {
+  const userRef = ref(db, `users/${currentUser.uid}/transactions/${id}`);
+  remove(userRef);
 }
 
-function removeTransaction(id){
+window.removeTransaction = removeTransaction;
 
-transactions=
-transactions.filter(
-item=>item.id!==id
-);
-
-updateLocalStorage();
-init();
-
+/* ========================
+   RENDER
+======================== */
+function render() {
+  list.innerHTML = "";
+  transactions.forEach(addTransactionDOM);
+  updateValues();
 }
 
-function updateLocalStorage(){
-localStorage.setItem(
-'transactions',
-JSON.stringify(transactions)
-);
+/* ========================
+   DOM RENDER ITEM
+======================== */
+function addTransactionDOM(t) {
+  const li = document.createElement("li");
+
+  const sign = t.amount < 0 ? "-" : "+";
+  li.classList.add(t.amount < 0 ? "expense" : "income");
+
+  li.innerHTML = `
+    <div>
+      <strong>${t.category}</strong>
+      <small>${t.text}</small>
+    </div>
+
+    <div>
+      <span>${sign}$${Math.abs(t.amount)}</span>
+      <button class="delete-btn" onclick="removeTransaction('${t.id}')">X</button>
+    </div>
+  `;
+
+  list.appendChild(li);
 }
 
-function drawChart(income,expense){
+/* ========================
+   TOTALS
+======================== */
+function updateValues() {
+  const amounts = transactions.map(t => t.amount);
 
-if(chart){
-chart.destroy();
+  const total = amounts.reduce((a, b) => a + b, 0);
+  const income = amounts.filter(x => x > 0).reduce((a, b) => a + b, 0);
+  const expense = amounts.filter(x => x < 0).reduce((a, b) => a + b, 0);
+
+  balance.textContent = `$${total.toFixed(2)}`;
+  moneyPlus.textContent = `$${income.toFixed(2)}`;
+  moneyMinus.textContent = `$${Math.abs(expense).toFixed(2)}`;
+
+  drawChart(income, Math.abs(expense));
 }
 
-chart=
-new Chart(
-document.getElementById('expenseChart'),
-{
-type:'pie',
-data:{
-labels:[
-'Income',
-'Expenses'
-],
-datasets:[{
-data:[
-income,
-expense
-]
-}]
-}
-}
-);
+/* ========================
+   CHART
+======================== */
+function drawChart(income, expense) {
+  if (chart) chart.destroy();
+  if (income === 0 && expense === 0) return;
 
+  chart = new Chart(document.getElementById("expenseChart"), {
+    type: "pie",
+    data: {
+      labels: ["Income", "Expenses"],
+      datasets: [{ data: [income, expense] }]
+    }
+  });
 }
 
-function init(){
-list.innerHTML='';
-transactions.forEach(
-addTransactionDOM
-);
-updateValues();
+/* ========================
+   DARK MODE
+======================== */
+function loadDarkMode() {
+  if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+    toggleDark.textContent = "☀";
+  } else {
+    toggleDark.textContent = "🌙";
+  }
 }
 
-form.addEventListener(
-'submit',
-addTransaction
-);
+toggleDark.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
 
-init();
->>>>>>> eeb94ff16cffef341c55f7a64418fa871dc75043
+  localStorage.setItem(
+    "darkMode",
+    document.body.classList.contains("dark-mode") ? "enabled" : "disabled"
+  );
+
+  toggleDark.textContent = document.body.classList.contains("dark-mode")
+    ? "☀"
+    : "🌙";
+});
+
+/* ========================
+   EVENTS
+======================== */
+form.addEventListener("submit", addTransaction);

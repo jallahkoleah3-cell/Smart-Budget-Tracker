@@ -1,139 +1,97 @@
-<<<<<<< HEAD
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Budget Tracker</title>
+
 <link rel="stylesheet" href="stylesheet.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
-<div class="container">
+<!-- LOGIN SECTION -->
+<div id="auth-container">
+  <h2>Smart Budget Login</h2>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+
+  <button id="signupBtn">Sign Up</button>
+  <button id="loginBtn">Login</button>
+
+  <p id="authMessage"></p>
+</div>
+
+<!-- APP SECTION (HIDDEN UNTIL LOGIN) -->
+<div id="app" style="display:none;">
+
+  <div class="container">
+
+    <!-- HEADER -->
     <div class="header">
-        <h1>💰 Smart Budget Tracker</h1>
-        <button id="toggleDark">🌙</button>
+      <h1>💰 Smart Budget Tracker</h1>
+      <button id="toggleDark">🌙</button>
     </div>
 
-<h2>Your Balance</h2>
-<h3 id="balance">$0.00</h3>
+    <!-- BALANCE -->
+    <div class="balance-card">
+      <h2>Your Balance</h2>
+      <h3 id="balance">$0.00</h3>
+    </div>
 
-<div class="summary">
-<div>
-<h4>Income</h4>
-<p id="money-plus">$0.00</p>
+    <!-- SUMMARY -->
+    <div class="summary">
+      <div class="card income">
+        <h4>Income</h4>
+        <p id="money-plus">$0.00</p>
+      </div>
+
+      <div class="card expense">
+        <h4>Expense</h4>
+        <p id="money-minus">$0.00</p>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="session">
+      <h3>Transaction History</h3>
+      <ul id="list"></ul>
+    </div>
+
+    <!-- FORM -->
+    <div class="session">
+      <h3>Add Transaction</h3>
+
+      <form id="form">
+        <input type="text" id="text" placeholder="Description" required />
+        <input type="number" id="amount" placeholder="Amount (+ income, - expense)" required />
+
+        <select id="category" required>
+          <option value="">Select Category</option>
+          <option value="Food">Food</option>
+          <option value="Transport">Transport</option>
+          <option value="Salary">Salary</option>
+          <option value="Bills">Bills</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <button type="submit">Add Transaction</button>
+      </form>
+    </div>
+
+    <!-- CHART -->
+    <div class="session">
+      <h3>Income vs Expenses</h3>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
 </div>
 
-<div>
-<h4>Expense</h4>
-<p id="money-minus">$0.00</p>
-</div>
-</div>
-
-<h3>Transaction History</h3>
-<ul id="list"></ul>
-
-<h3>Add Transaction</h3>
-
-<form id="form">
-<input
-type="text"
-id="text"
-placeholder="Description"
-required>
-
-<input
-type="number"
-id="amount"
-placeholder="Amount (+ income, - expense)"
-required>
-
-<select id="category" required>
-<option value="">Select Category</option>
-<option value="Food">Food</option>
-<option value="Transport">Transport</option>
-<option value="Salary">Salary</option>
-<option value="Bills">Bills</option>
-<option value="Other">Other</option>
-</select><br>
-
-<button type="submit">
-Add Transaction
-</button>
-
-</form>
-
-<h3>Income vs Expenses</h3>
-<canvas id="expenseChart"></canvas>
-
-</div>
-
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 
 </body>
 </html>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Budget Tracker</title>
-<link rel="stylesheet" href="stylesheet.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-<div class="container">
-<h1>💰 Smart Budget Tracker</h1>
-
-<h2>Your Balance</h2>
-<h3 id="balance">$0.00</h3>
-
-<div class="summary">
-<div>
-<h4>Income</h4>
-<p id="money-plus">$0.00</p>
-</div>
-
-<div>
-<h4>Expense</h4>
-<p id="money-minus">$0.00</p>
-</div>
-</div>
-
-<h3>Transaction History</h3>
-<ul id="list"></ul>
-
-<h3>Add Transaction</h3>
-
-<form id="form">
-<input
-type="text"
-id="text"
-placeholder="Description"
-required>
-
-<input
-type="number"
-id="amount"
-placeholder="Amount (+ income, - expense)"
-required>
-
-<button type="submit">
-Add Transaction
-</button>
-
-</form>
-
-<h3>Income vs Expenses</h3>
-<canvas id="expenseChart"></canvas>
-
-</div>
-
-<script src="script.js"></script>
-
-</body>
-</html>
->>>>>>> eeb94ff16cffef341c55f7a64418fa871dc75043
