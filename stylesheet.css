@@ -1,318 +1,92 @@
-/* =========================
-   BASE RESET
-========================= */
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: Arial, sans-serif;
-}
-
-/* =========================
-   GLOBAL LAYOUT
-========================= */
 body {
-background: linear-gradient(135deg, #eef2f7, #dfe9f3);
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-padding: 20px;
-transition: all 0.4s ease;
+  margin: 0;
+  font-family: Arial;
+  background: #eef2f7;
 }
 
-/* =========================
-   LOGIN SCREEN
-========================= */
+/* AUTH */
 #auth-container {
-height: 100vh;
-width: 100%;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg,#2563eb,#06b6d4);
 }
 
-#auth-container h2 {
-color: white;
-margin-bottom: 20px;
+.auth-box {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 300px;
+  text-align: center;
 }
 
-#auth-container input {
-width: 280px;
-padding: 12px;
-margin: 6px 0;
-border-radius: 8px;
-border: none;
-outline: none;
+.auth-box input {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
 }
 
-#auth-container button {
-width: 140px;
-margin: 5px;
-padding: 10px;
-border-radius: 8px;
-border: none;
-cursor: pointer;
-font-weight: bold;
-}
-
-#signupBtn {
-background: #22c55e;
-color: white;
-}
-
-#loginBtn {
-background: #2563eb;
-color: white;
-}
-
-/* =========================
-   APP WRAPPER
-========================= */
-#app {
-width: 100%;
-display: flex;
-justify-content: center;
-}
-
-/* =========================
-   MAIN CONTAINER (PREMIUM CARD)
-========================= */
+/* APP */
 .container {
-background: #ffffff;
-padding: 25px;
-width: 450px;
-border-radius: 18px;
-box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-transition: all 0.3s ease;
-animation: fadeIn 0.5s ease;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
 }
 
-.container:hover {
-transform: translateY(-2px);
-box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-}
-
-/* FADE ANIMATION */
-@keyframes fadeIn {
-from {
-opacity: 0;
-transform: translateY(10px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 .header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-h1 {
-font-size: 20px;
-color: #1e3a8a;
+/* DASHBOARD */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin: 15px 0;
 }
 
-/* =========================
-   BALANCE CARD
-========================= */
-.balance-card {
-text-align: center;
-margin-bottom: 20px;
-padding: 15px;
-border-radius: 12px;
-background: #f8fafc;
+.dashboard-card {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
-.balance-card h3 {
-font-size: 28px;
+/* FILTER */
+.filter-section {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
 }
 
-/* =========================
-   SUMMARY CARDS
-========================= */
-.summary {
-display: flex;
-justify-content: space-between;
-gap: 10px;
-margin: 15px 0;
+.filter-section button {
+  flex: 1;
+  padding: 8px;
 }
 
-.card {
-flex: 1;
-padding: 12px;
-border-radius: 12px;
-background: #f3f4f6;
-text-align: center;
-}
-
-.card.income {
-border-left: 5px solid #22c55e;
-color: #16a34a;
-}
-
-.card.expense {
-border-left: 5px solid #ef4444;
-color: #dc2626;
-}
-
-/* =========================
-   SECTIONS
-========================= */
-.session {
-margin-top: 18px;
-}
-
-/* =========================
-   TRANSACTION LIST
-========================= */
+/* LIST */
 ul {
-list-style: none;
+  list-style: none;
+  padding: 0;
 }
 
 li {
-background: #f9fafb;
-padding: 12px;
-margin-bottom: 10px;
-border-radius: 10px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-border-left: 4px solid transparent;
-transition: 0.2s ease;
+  background: white;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
 }
 
-li:hover {
-transform: scale(1.02);
-}
-
-li.income {
-border-left-color: #22c55e;
-}
-
-li.expense {
-border-left-color: #ef4444;
-}
-
-/* =========================
-   DELETE BUTTON
-========================= */
-.delete-btn {
-background: #ef4444;
-color: white;
-border: none;
-padding: 5px 10px;
-border-radius: 6px;
-cursor: pointer;
-font-size: 12px;
-}
-
-/* =========================
-   FORM
-========================= */
-form {
-display: flex;
-flex-direction: column;
-gap: 10px;
-}
-
-input, select {
-padding: 12px;
-border-radius: 8px;
-border: 1px solid #ddd;
-outline: none;
-}
-
-form button {
-padding: 12px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-background: #2563eb;
-color: white;
-font-weight: bold;
-transition: 0.2s ease;
-}
-
-form button:hover {
-transform: translateY(-2px);
-}
-
-/* =========================
-   CHART
-========================= */
-canvas {
-margin-top: 20px;
-}
-
-/* =========================
-   DARK MODE
-========================= */
-.dark-mode {
-background: #0f172a;
-}
-
-.dark-mode .container {
-background: #1e293b;
-color: white;
-}
-
-.dark-mode .balance-card,
-.dark-mode .card,
-.dark-mode li {
-background: #334155;
-color: white;
-}
-
-.dark-mode input,
-.dark-mode select {
-background: #1f2937;
-color: white;
-border: 1px solid #475569;
-}
-
-.dark-mode h1,
-.dark-mode h3,
-.dark-mode h4 {
-color: white;
-}
-
-/* FIX BODY IN DARK MODE */
-.dark-mode body {
-background: #0f172a;
-}
-
-/* =========================
-   TOGGLE BUTTON
-========================= */
-#toggleDark {
-padding: 8px 12px;
-border-radius: 50%;
-border: none;
-cursor: pointer;
-background: #111827;
-color: white;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 500px) {
-.container {
-width: 95%;
-padding: 15px;
-}
-
-.summary {
-flex-direction: column;
-}
+/* FORM */
+form input, form select {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
 }

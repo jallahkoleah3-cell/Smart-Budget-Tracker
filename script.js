@@ -3,179 +3,197 @@ import { auth, db } from "./firebase.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 import {
   ref,
+  set,
   push,
   onValue,
-  remove
+  remove,
+  get
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
-/* ========================
+/* =====================
+   STATE
+===================== */
+let currentUser = null;
+let transactions = [];
+let chart = null;
+let currentFilter = "all";
+
+/* =====================
    DOM
-======================== */
-const balance = document.getElementById('balance');
-const moneyPlus = document.getElementById('money-plus');
-const moneyMinus = document.getElementById('money-minus');
-const list = document.getElementById('list');
-const form = document.getElementById('form');
-const text = document.getElementById('text');
-const amount = document.getElementById('amount');
-const category = document.getElementById('category');
-const toggleDark = document.getElementById('toggleDark');
-
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const signupBtn = document.getElementById("signupBtn");
-const loginBtn = document.getElementById("loginBtn");
-const authMessage = document.getElementById("authMessage");
-
+===================== */
 const authContainer = document.getElementById("auth-container");
 const app = document.getElementById("app");
 
-/* ========================
-   STATE
-======================== */
-let transactions = [];
-let currentUser = null;
-let chart = null;
+const email = document.getElementById("email");
+const password = document.getElementById("password");
 
-/* ========================
-   AUTH
-======================== */
-signupBtn.addEventListener("click", async () => {
+const form = document.getElementById("form");
+const text = document.getElementById("text");
+const amount = document.getElementById("amount");
+const category = document.getElementById("category");
+
+const list = document.getElementById("list");
+const balance = document.getElementById("balance");
+const moneyPlus = document.getElementById("money-plus");
+const moneyMinus = document.getElementById("money-minus");
+
+/* =====================
+   AUTH BUTTONS (NO PAGE RELOAD FIX)
+===================== */
+document.getElementById("signupBtn").addEventListener("click", async (e) => {
+  e.preventDefault();
+
   try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value);
-    authMessage.textContent = "Account created!";
+    const userCred = await createUserWithEmailAndPassword(auth, email.value, password.value);
+    const user = userCred.user;
+
+    await set(ref(db, `users/${user.uid}`), {
+      profile: {
+        email: user.email,
+        createdAt: new Date().toISOString()
+      },
+      subscription: {
+        plan: "free"
+      }
+    });
+
   } catch (err) {
-    authMessage.textContent = err.message;
+    alert(err.message);
   }
 });
 
-loginBtn.addEventListener("click", async () => {
+document.getElementById("loginBtn").addEventListener("click", async (e) => {
+  e.preventDefault();
+
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
-    authMessage.textContent = "Login successful!";
   } catch (err) {
-    authMessage.textContent = err.message;
+    alert(err.message);
   }
 });
 
-/* ========================
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+});
+
+/* =====================
    AUTH STATE
-======================== */
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUser = user;
-    authContainer.style.display = "none";
-    app.style.display = "block";
-    loadTransactions();
-    loadDarkMode();
-  } else {
+===================== */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
     currentUser = null;
     authContainer.style.display = "flex";
     app.style.display = "none";
+    return;
   }
-});
 
-/* ========================
-   LOAD DATA
-======================== */
-function loadTransactions() {
-  const userRef = ref(db, `users/${currentUser.uid}/transactions`);
+  currentUser = user;
+  authContainer.style.display = "none";
+  app.style.display = "block";
 
-  onValue(userRef, (snapshot) => {
-    const data = snapshot.val();
-    transactions = [];
+  const txRef = ref(db, `users/${user.uid}/transactions`);
 
-    if (data) {
-      transactions = Object.entries(data).map(([id, value]) => ({
-        id,
-        ...value,
-        amount: Number(value.amount)
-      }));
-    }
+  onValue(txRef, (snap) => {
+    const data = snap.val();
+
+    transactions = data
+      ? Object.entries(data).map(([id, v]) => ({ id, ...v }))
+      : [];
 
     render();
   });
-}
+});
 
-/* ========================
+/* =====================
    ADD TRANSACTION
-======================== */
-function addTransaction(e) {
+===================== */
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  if (!currentUser) return;
   if (!text.value || !amount.value || !category.value) return;
 
-  const userRef = ref(db, `users/${currentUser.uid}/transactions`);
-
-  push(userRef, {
+  push(ref(db, `users/${currentUser.uid}/transactions`), {
     text: text.value,
+    amount: Number(amount.value),
     category: category.value,
-    amount: Number(amount.value)
+    date: new Date().toISOString()
   });
 
-  text.value = "";
-  amount.value = "";
-  category.value = "";
+  form.reset();
+});
+
+/* =====================
+   DELETE
+===================== */
+window.removeTransaction = (id) => {
+  remove(ref(db, `users/${currentUser.uid}/transactions/${id}`));
+};
+
+/* =====================
+   FILTER
+===================== */
+function getFilteredTransactions() {
+  const now = new Date();
+
+  return transactions.filter((t) => {
+    const d = new Date(t.date);
+
+    if (currentFilter === "daily") {
+      return d.toDateString() === now.toDateString();
+    }
+
+    if (currentFilter === "weekly") {
+      return (now - d) / (1000 * 60 * 60 * 24) <= 7;
+    }
+
+    if (currentFilter === "monthly") {
+      return d.getMonth() === now.getMonth();
+    }
+
+    return true;
+  });
 }
 
-/* ========================
-   REMOVE
-======================== */
-function removeTransaction(id) {
-  const userRef = ref(db, `users/${currentUser.uid}/transactions/${id}`);
-  remove(userRef);
-}
-
-window.removeTransaction = removeTransaction;
-
-/* ========================
+/* =====================
    RENDER
-======================== */
+===================== */
 function render() {
   list.innerHTML = "";
-  transactions.forEach(addTransactionDOM);
-  updateValues();
-}
 
-/* ========================
-   DOM RENDER ITEM
-======================== */
-function addTransactionDOM(t) {
-  const li = document.createElement("li");
+  const filtered = getFilteredTransactions();
 
-  const sign = t.amount < 0 ? "-" : "+";
-  li.classList.add(t.amount < 0 ? "expense" : "income");
+  let total = 0;
+  let income = 0;
+  let expense = 0;
 
-  li.innerHTML = `
-    <div>
-      <strong>${t.category}</strong>
-      <small>${t.text}</small>
-    </div>
+  filtered.forEach((t) => {
+    const amt = Number(t.amount);
 
-    <div>
-      <span>${sign}$${Math.abs(t.amount)}</span>
-      <button class="delete-btn" onclick="removeTransaction('${t.id}')">X</button>
-    </div>
-  `;
+    total += amt;
+    amt > 0 ? (income += amt) : (expense += amt);
 
-  list.appendChild(li);
-}
+    const li = document.createElement("li");
+    li.classList.add(amt < 0 ? "expense" : "income");
 
-/* ========================
-   TOTALS
-======================== */
-function updateValues() {
-  const amounts = transactions.map(t => t.amount);
+    li.innerHTML = `
+      <div>
+        <strong>${t.category}</strong>
+        <small>${t.text}</small>
+      </div>
+      <div>
+        <span>${amt < 0 ? "-" : "+"}$${Math.abs(amt)}</span>
+        <button onclick="removeTransaction('${t.id}')">X</button>
+      </div>
+    `;
 
-  const total = amounts.reduce((a, b) => a + b, 0);
-  const income = amounts.filter(x => x > 0).reduce((a, b) => a + b, 0);
-  const expense = amounts.filter(x => x < 0).reduce((a, b) => a + b, 0);
+    list.appendChild(li);
+  });
 
   balance.textContent = `$${total.toFixed(2)}`;
   moneyPlus.textContent = `$${income.toFixed(2)}`;
@@ -184,48 +202,44 @@ function updateValues() {
   drawChart(income, Math.abs(expense));
 }
 
-/* ========================
+/* =====================
    CHART
-======================== */
-function drawChart(income, expense) {
-  if (chart) chart.destroy();
-  if (income === 0 && expense === 0) return;
+===================== */
+function drawChart(i, e) {
+  const canvas = document.getElementById("expenseChart");
 
-  chart = new Chart(document.getElementById("expenseChart"), {
-    type: "pie",
+  if (chart) chart.destroy();
+
+  if (i === 0 && e === 0) return;
+
+  chart = new Chart(canvas, {
+    type: "doughnut",
     data: {
-      labels: ["Income", "Expenses"],
-      datasets: [{ data: [income, expense] }]
+      labels: ["Income", "Expense"],
+      datasets: [{ data: [i, e] }]
     }
   });
 }
 
-/* ========================
-   DARK MODE
-======================== */
-function loadDarkMode() {
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-    toggleDark.textContent = "☀";
-  } else {
-    toggleDark.textContent = "🌙";
-  }
-}
+/* =====================
+   FILTER BUTTONS
+===================== */
+document.getElementById("filterAll").onclick = () => {
+  currentFilter = "all";
+  render();
+};
 
-toggleDark.addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
+document.getElementById("filterDay").onclick = () => {
+  currentFilter = "daily";
+  render();
+};
 
-  localStorage.setItem(
-    "darkMode",
-    document.body.classList.contains("dark-mode") ? "enabled" : "disabled"
-  );
+document.getElementById("filterWeek").onclick = () => {
+  currentFilter = "weekly";
+  render();
+};
 
-  toggleDark.textContent = document.body.classList.contains("dark-mode")
-    ? "☀"
-    : "🌙";
-});
-
-/* ========================
-   EVENTS
-======================== */
-form.addEventListener("submit", addTransaction);
+document.getElementById("filterMonth").onclick = () => {
+  currentFilter = "monthly";
+  render();
+};
